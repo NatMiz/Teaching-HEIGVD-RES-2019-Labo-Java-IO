@@ -7,10 +7,8 @@ import ch.heigvd.res.labio.interfaces.IFileExplorer;
 import ch.heigvd.res.labio.interfaces.IFileVisitor;
 import ch.heigvd.res.labio.quotes.QuoteClient;
 import ch.heigvd.res.labio.quotes.Quote;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -26,6 +24,11 @@ public class Application implements IApplication {
    * to where the Java application is invoked.
    */
   public static String WORKSPACE_DIRECTORY = "./workspace/quotes";
+
+  /**
+   * Charset used to encode the quotes
+   */
+  public static String CHARSET = "utf8";
   
   private static final Logger LOG = Logger.getLogger(Application.class.getName());
   
@@ -90,6 +93,10 @@ public class Application implements IApplication {
        * one method provided by this class, which is responsible for storing the content of the
        * quote in a text file (and for generating the directories based on the tags).
        */
+
+      //Create a file to store the quote
+      storeQuote(quote, ("quote-" + (i + 1) + "." + CHARSET));
+
       LOG.info("Received a new joke with " + quote.getTags().size() + " tags.");
       for (String tag : quote.getTags()) {
         LOG.info("> " + tag);
@@ -123,7 +130,30 @@ public class Application implements IApplication {
    * @throws IOException 
    */
   void storeQuote(Quote quote, String filename) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    //TODO implement the method
+    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    String quote_path = WORKSPACE_DIRECTORY + "/";
+
+    // Building the path to the quote
+    for(String tag : quote.getTags()){
+      quote_path += tag + "/";
+    }
+
+    // Create an instance of a file to write the quote
+    File quote_file = new File(quote_path);
+
+    //Creation of the directories to store the quote
+    quote_file.getParentFile().mkdirs();
+
+    //Create an empty file
+    quote_file.createNewFile();
+
+    // Write the quote on the recently created file
+    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(quote_file), CHARSET);
+    writer.write(quote.getQuote());
+
+    // Closing the output stream
+    writer.close();
   }
   
   /**
@@ -135,6 +165,7 @@ public class Application implements IApplication {
     explorer.explore(new File(WORKSPACE_DIRECTORY), new IFileVisitor() {
       @Override
       public void visit(File file) {
+        //TODO DFS to visit the files
         /*
          * There is a missing piece here. Notice how we use an anonymous class here. We provide the implementation
          * of the the IFileVisitor interface inline. You just have to add the body of the visit method, which should
