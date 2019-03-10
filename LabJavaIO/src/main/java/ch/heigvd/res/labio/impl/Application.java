@@ -139,6 +139,9 @@ public class Application implements IApplication {
       quote_path += tag + "/";
     }
 
+    // To complete the path to the file
+    quote_path += filename;
+
     // Create an instance of a file to write the quote
     File quote_file = new File(quote_path);
 
@@ -148,12 +151,18 @@ public class Application implements IApplication {
     //Create an empty file
     quote_file.createNewFile();
 
+    //Open a stream to write on the file
+    FileOutputStream fileStream = new FileOutputStream(quote_file);
+
     // Write the quote on the recently created file
-    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(quote_file), CHARSET);
+    OutputStreamWriter writer = new OutputStreamWriter(fileStream, CHARSET);
     writer.write(quote.getQuote());
 
     // Closing the output stream
     writer.close();
+
+    //CLosing the stream to the file
+    fileStream.close();
   }
   
   /**
