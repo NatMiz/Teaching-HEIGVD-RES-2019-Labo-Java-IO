@@ -173,21 +173,18 @@ public class Application implements IApplication {
     explorer.explore(new File(WORKSPACE_DIRECTORY), new IFileVisitor() {
       @Override
       public void visit(File file) {
-        //TODO visit the files
         /*
          * There is a missing piece here. Notice how we use an anonymous class here. We provide the implementation
          * of the the IFileVisitor interface inline. You just have to add the body of the visit method, which should
          * be pretty easy (we want to write the filename, including the path, to the writer passed in argument).
          */
-          if (file.isDirectory()) {
-            File[] listFiles = file.listFiles();
+        try {
+          writer.write(file.getPath() + "\n");
+        }catch(IOException e){
+          LOG.log(Level.SEVERE, e.getMessage());
+        }
 
-            for (File f : listFiles) {
-             // writer.write(file.getPath());
-              //TODO write full path to writer
-            }
           }
-      }
     });
   }
 
