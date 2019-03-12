@@ -184,7 +184,7 @@ public class Application implements IApplication {
           LOG.log(Level.SEVERE, e.getMessage());
         }
 
-          }
+      }
     });
   }
 
