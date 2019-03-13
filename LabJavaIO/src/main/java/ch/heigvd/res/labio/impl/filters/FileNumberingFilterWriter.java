@@ -4,6 +4,8 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class transforms the streams of character sent to the decorated writer.
@@ -19,23 +21,76 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   private static final Logger LOG = Logger.getLogger(FileNumberingFilterWriter.class.getName());
 
+  // Indicate whether the line we are working on is the first or not
+  private boolean lineBefore = false;
+
+  private int counter = 1;
+
+  private char tab = '\t';
+
   public FileNumberingFilterWriter(Writer out) {
     super(out);
   }
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    Pattern pattern = Pattern.compile("(\r\n|\r|\n)");
+    Matcher matcher = pattern.matcher(str);
+
+    StringBuffer strBldr = new StringBuffer();
+
+    // If only a part of the string is required
+    if(str.length() > len){
+      strBldr.append(str.substring(off, off + len));
+    }else{
+      strBldr.append(str);
+    }
+
+    if(!lineBefore) {
+      // Adding line number and tab at the beginning of the string
+      strBldr.insert(0, counter);
+      // https://stackoverflow.com/questions/1306727/way-to-get-number-of-digits-in-an-int
+      strBldr.insert(String.valueOf(counter).length(), tab);
+    }
+
+    // Further transform the string only if there a newline character in it
+    if(matcher.groupCount() > 0){
+      for(int i = off; i < strBldr.length(); i++){
+        if(strBldr.charAt(i) == '\r' && strBldr.indexOf("\r\n") > 0){ // Windows
+          i+=2;
+          // Adding line number and tab at the beginning of a new line
+          strBldr.insert(i, ++counter);
+          strBldr.insert(i + String.valueOf(counter).length(), tab);
+        }
+
+        if(strBldr.charAt(i) == '\r' || strBldr.charAt(i) == '\n'){ // MacOS or Linux
+          strBldr.insert(++i, ++counter);
+          strBldr.insert(i + String.valueOf(counter).length(), tab);
+        }
+      }
+    }
+
+    lineBefore = true;
+    // Sending new string to parent
+    super.write(strBldr.toString(), 0, strBldr.length());
+
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
+
+    for(int i = off; i < len; ++i){
+      this.write((int)cbuf[i]);
+    }
   }
 
   @Override
   public void write(int c) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
+
+
   }
 
 }
