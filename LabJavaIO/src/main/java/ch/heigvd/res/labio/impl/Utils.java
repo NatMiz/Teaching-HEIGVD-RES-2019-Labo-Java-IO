@@ -24,19 +24,37 @@ public class Utils {
   public static String[] getNextLine(String lines) {
     //throw new UnsupportedOperationException("The student has not implemented this method yet.");
 
+    Pattern pattern = Pattern.compile("(\r\n)|(\n)|(\r)");
+    Matcher matcher = pattern.matcher(lines);
+
     String[] linesTab = new String[]{"", lines};
 
     int indexBegin = 0;
     int indexTab = 0;
+    int matchCount = 0;
+    int countIndex = 0;
 
-    for(int i = 0; i < lines.length(); ++i){
-      if(lines.charAt(i) == '\r' || lines.charAt(i) == '\n'){ // MacOs or Linux
-        if(lines.charAt(i + 1) == '\n'){ // Windows or '\n\n' in Linux
-          i++;
+    // Counting matching pattern in lines
+    while(matcher.find(countIndex)){
+      matchCount++;
+      countIndex = matcher.start() + 1;
+    }
+
+    // if there is at least one newline character
+    if(matchCount > 0) {
+      for (int i = 0; i < lines.length(); ++i) {
+        if (lines.charAt(i) == '\r' && lines.indexOf("\r\n") > 0) { // Windows
+          i += 2;
+          linesTab[indexTab] = lines.substring(indexBegin, i);
+          linesTab[++indexTab] = lines.substring(i);
+          break;
         }
-        linesTab[indexTab] = lines.substring(indexBegin, i);
-        linesTab[++indexTab] = lines.substring(++i);
-        break;
+        if (lines.charAt(i) == '\r' || lines.charAt(i) == '\n') { // MacOS or Linux
+          linesTab[indexTab] = lines.substring(indexBegin, ++i);
+          linesTab[++indexTab] = lines.substring(i);
+          break;
+        }
+
       }
     }
 
