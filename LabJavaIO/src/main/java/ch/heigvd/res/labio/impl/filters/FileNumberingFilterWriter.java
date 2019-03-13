@@ -24,6 +24,9 @@ public class FileNumberingFilterWriter extends FilterWriter {
   // Indicate whether the line we are working on is the first or not
   private boolean lineBefore = false;
 
+  // Indicate that the last char was a '\r'
+  private boolean winNewLineChar = false;
+
   private int counter = 1;
 
   private char tab = '\t';
@@ -34,7 +37,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
+
     Pattern pattern = Pattern.compile("(\r\n|\r|\n)");
     Matcher matcher = pattern.matcher(str);
 
@@ -79,7 +82,6 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
 
     for(int i = off; i < len; ++i){
       this.write((int)cbuf[i]);
@@ -88,9 +90,42 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(int c) throws IOException {
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
 
+    String str = new String();
 
+    char character = (char) c;
+
+    if (!lineBefore || winNewLineChar) {
+      if(!lineBefore)
+        lineBefore = true;
+
+      if (winNewLineChar) {
+        winNewLineChar = false;
+        if(character == '\n'){ // Windows
+          str += character + String.valueOf(counter) + tab;
+        }
+
+      }else{ // MacOS or 1st line
+        str += String.valueOf(counter) + tab + character;
+      }
+      super.write(str, 0, str.length());
+      ++counter;
+
+    }else{
+
+      switch (character){
+        case '\n': // Linux
+          str += character + String.valueOf(counter) + tab;
+          super.write(str, 0, str.length());
+          ++counter;
+          break;
+
+        case '\r': // Windows or MacOS, next char needed to determine
+          winNewLineChar = true;
+
+          default:
+            super.write(c);
+      }
+    }
   }
-
 }
