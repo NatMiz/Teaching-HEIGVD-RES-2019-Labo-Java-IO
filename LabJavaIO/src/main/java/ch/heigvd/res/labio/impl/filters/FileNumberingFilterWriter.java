@@ -60,7 +60,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
     // Further transform the string only if there a newline character in it
     if(matcher.groupCount() > 0){
       for(int i = off; i < strBldr.length(); i++){
-        if(strBldr.charAt(i) == '\r' && strBldr.indexOf("\r\n") > 0){ // Windows
+        if(strBldr.charAt(i) == '\r' && strBldr.indexOf("\r\n", i) > 0){ // Windows
           i+=2;
           // Adding line number and tab at the beginning of a new line
           strBldr.insert(i, ++counter);
@@ -103,9 +103,11 @@ public class FileNumberingFilterWriter extends FilterWriter {
         winNewLineChar = false;
         if(character == '\n'){ // Windows
           str += character + String.valueOf(counter) + tab;
+        }else{ // MacOS
+          str += String.valueOf(counter) + tab + character;
         }
 
-      }else{ // MacOS or 1st line
+      }else{ // 1st line
         str += String.valueOf(counter) + tab + character;
       }
       super.write(str, 0, str.length());

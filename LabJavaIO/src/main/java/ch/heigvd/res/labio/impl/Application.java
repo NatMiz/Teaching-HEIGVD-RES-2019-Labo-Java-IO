@@ -24,11 +24,6 @@ public class Application implements IApplication {
    * to where the Java application is invoked.
    */
   public static String WORKSPACE_DIRECTORY = "./workspace/quotes";
-
-  /**
-   * Charset used to encode the quotes
-   */
-  public static String CHARSET = "utf8";
   
   private static final Logger LOG = Logger.getLogger(Application.class.getName());
   
@@ -95,7 +90,7 @@ public class Application implements IApplication {
        */
 
       //Create a file to store the quote
-      storeQuote(quote, ("quote-" + (i + 1) + "." + CHARSET));
+      storeQuote(quote, ("quote-" + (i + 1) + ".utf8"));
 
       LOG.info("Received a new joke with " + quote.getTags().size() + " tags.");
       for (String tag : quote.getTags()) {
@@ -154,7 +149,7 @@ public class Application implements IApplication {
     FileOutputStream fileStream = new FileOutputStream(quote_file);
 
     // Write the quote on the recently created file
-    OutputStreamWriter writer = new OutputStreamWriter(fileStream, CHARSET);
+    OutputStreamWriter writer = new OutputStreamWriter(fileStream, "UTF-8");
     writer.write(quote.getQuote());
 
     // Closing the output stream
