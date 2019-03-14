@@ -22,7 +22,6 @@ public class Utils {
    * contain any line separator, then the first element is an empty string.
    */
   public static String[] getNextLine(String lines) {
-    //throw new UnsupportedOperationException("The student has not implemented this method yet.");
 
     Pattern pattern = Pattern.compile("(\r\n)|(\n)|(\r)");
     Matcher matcher = pattern.matcher(lines);
@@ -31,17 +30,10 @@ public class Utils {
 
     int indexBegin = 0;
     int indexTab = 0;
-    int matchCount = 0;
     int countIndex = 0;
 
-    // Counting matching pattern in lines
-    while(matcher.find(countIndex)){
-      matchCount++;
-      countIndex = matcher.start() + 1;
-    }
-
     // if there is at least one newline character
-    if(matchCount > 0) {
+    if(matcher.groupCount() > 0) {
       for (int i = 0; i < lines.length(); ++i) {
         if (lines.charAt(i) == '\r' && lines.indexOf("\r\n") > 0) { // Windows
           i += 2;

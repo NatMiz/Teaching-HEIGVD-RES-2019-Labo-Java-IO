@@ -77,7 +77,6 @@ public class FileNumberingFilterWriter extends FilterWriter {
     lineBefore = true;
     // Sending new string to parent
     super.write(strBldr.toString(), 0, strBldr.length());
-
   }
 
   @Override
@@ -96,8 +95,9 @@ public class FileNumberingFilterWriter extends FilterWriter {
     char character = (char) c;
 
     if (!lineBefore || winNewLineChar) {
-      if(!lineBefore)
+      if(!lineBefore) {
         lineBefore = true;
+      }
 
       if (winNewLineChar) {
         winNewLineChar = false;

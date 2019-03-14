@@ -41,8 +41,6 @@ public class DFSFileExplorer implements IFileExplorer {
       for(File f : fileOnlyList){
         explore(f, visitor);
       }
-
     }
   }
-
 }
